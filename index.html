@@ -31,6 +31,13 @@
                 const lng = position.coords.longitude;
                 
                 marker.setLatLng([lat, lng]);
+				marker.bindTooltip("hos outa", 
+				{
+				    permanent: true,   // Always visible
+				    direction: 'top',  // Shows above the marker
+				    className: 'user-label', // For custom styling
+				    offset: [0, -10]   // Moves it up so it doesn't cover the icon
+				}).openTooltip();
                 map.setView([lat, lng], 16);
             }, (err) => console.error(err), {
                 enableHighAccuracy: true
