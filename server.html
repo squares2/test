@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Server Map</title>
+    <style>#map { height: 100vh; }</style>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <div id="map"></div>
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getDatabase, set, get,update,remove,ref,runTransaction,child,onValue}
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+const firebaseConfig = 
+{
+    apiKey: "AIzaSyCSTThgge2nSFlEQXjS1ta2tZXvVgNAnZ0",
+    authDomain: "deliveryonline-300f7.firebaseapp.com",
+    projectId: "deliveryonline-300f7",
+    storageBucket: "deliveryonline-300f7.firebasestorage.app",
+    messagingSenderId: "360058447266",
+    appId: "1:360058447266:web:5ac25e3ad30f636bdd3efb",
+	databaseURL: "https://deliveryonline-300f7-default-rtdb.firebaseio.com"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dbref=ref(db);
+        const map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        const markers = {}; // Store markers by User ID
+
+        // Listen for ALL location updates in real-time
+        onValue(ref(db, 'locations/'), (snapshot) => {
+            const data = snapshot.val();
+            for (let uid in data) {
+                const user = data[uid];
+                
+                if (markers[uid]) {
+                    // Update existing marker
+                    markers[uid].setLatLng([user.lat, user.lng]);
+                } else {
+                    // Create new marker for new user
+                    markers[uid] = L.marker([user.lat, user.lng]).addTo(map)
+                                     .bindTooltip(user.name, { permanent: true });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
